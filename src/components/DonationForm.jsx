@@ -88,11 +88,18 @@ export default function DonationForm() {
     const whatsappNumber = import.meta.env.VITE_ADMIN_WA_NUMBER || '6281234567890';
     const formattedPhone = formatPhoneForWhatsApp(formData.noWa);
     
+    // Format date for WhatsApp message
+    const formattedDate = new Date(formData.tanggal).toLocaleDateString('id-ID', { 
+      day: 'numeric', 
+      month: 'long', 
+      year: 'numeric' 
+    });
+    
     let message = `Like Foundation
 
 DONASI BARU
 
-  Tanggal : ${formData.tanggal}
+  Tanggal : ${formattedDate}
   Nama : ${formData.nama}
   No. WA : ${formattedPhone}
   Alamat : ${formData.alamat}
@@ -117,23 +124,34 @@ Semoga diberikan kemudahan dan keberkahan untuk kita semua`;
     const encodedMessage = encodeURIComponent(message);
     const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
     
-    window.open(whatsappUrl, '_blank');
+    // Detect mobile device
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setFormData({
-        tanggal: new Date().toISOString().split('T')[0],
-        nama: '',
-        noWa: '',
-        alamat: '',
-        nominal: '',
-        terbilang: '',
-        pembayaran: '',
-        program: '',
-        noted: '',
-        programCustom: ''
-      });
-    }, 1000);
+    if (isMobile) {
+      // Mobile: Use location.href for better deep link support
+      setTimeout(() => {
+        window.location.href = whatsappUrl;
+      }, 300);
+    } else {
+      // Desktop: Open in new tab
+      window.open(whatsappUrl, '_blank');
+      
+      setTimeout(() => {
+        setIsSubmitting(false);
+        setFormData({
+          tanggal: new Date().toISOString().split('T')[0],
+          nama: '',
+          noWa: '',
+          alamat: '',
+          nominal: '',
+          terbilang: '',
+          pembayaran: '',
+          program: '',
+          noted: '',
+          programCustom: ''
+        });
+      }, 1000);
+    }
   };
 
   const handleSubmit = (e) => {
