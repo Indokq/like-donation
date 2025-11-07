@@ -88,19 +88,21 @@ export default function DonationForm() {
     const whatsappNumber = import.meta.env.VITE_ADMIN_WA_NUMBER || '6281234567890';
     const formattedPhone = formatPhoneForWhatsApp(formData.noWa);
     
-    let message = `*DONASI BARU*
+    let message = `Like Foundation
 
-📅 Tanggal: ${formData.tanggal}
-👤 Nama: ${formData.nama}
-📱 No. WA: ${formattedPhone}
-📍 Alamat: ${formData.alamat}
-💰 Nominal: Rp ${parseInt(formData.nominal).toLocaleString('id-ID')}
-✍️ Terbilang: ${formData.terbilang}
-💳 Keterangan: ${formData.pembayaran}`;
+DONASI BARU
+
+  Tanggal : ${formData.tanggal}
+  Nama : ${formData.nama}
+  No. WA : ${formattedPhone}
+  Alamat : ${formData.alamat}
+  Nominal : Rp ${parseInt(formData.nominal).toLocaleString('id-ID')}
+  Terbilang : ${formData.terbilang}
+  Keterangan : ${formData.pembayaran}`;
 
     // Add noted if KESANGGUPAN is selected
     if (formData.pembayaran === 'KESANGGUPAN' && formData.noted) {
-      message += `\n📝 Catatan: ${formData.noted}`;
+      message += `\n  Catatan : ${formData.noted}`;
     }
 
     // Add program - use custom program if Lainnya is selected
@@ -108,9 +110,9 @@ export default function DonationForm() {
       ? formData.programCustom 
       : formData.program;
     
-    message += `\n📋 Program: ${programName}
+    message += `\n  Program : ${programName}
 
-Terima kasih atas donasi Anda! 🙏`;
+Semoga diberikan kemudahan dan keberkahan untuk kita semua`;
 
     const encodedMessage = encodeURIComponent(message);
     const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
