@@ -83,22 +83,22 @@ export const generateDonationPDF = (formData) => {
   doc.setFontSize(6);
   doc.text('a.n. Solidaritas Al Aqsha', 155, 65);
 
-  // WhatsApp confirmation - aligned with header
+  // WhatsApp confirmation - aligned with header (added 5mm spacing)
   doc.setFontSize(7);
   doc.setFont('helvetica', 'normal');
-  doc.text('Konfirmasi ke nomer WhatsApp', 100, 68);
+  doc.text('Konfirmasi ke nomer WhatsApp', 100, 73);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(7);
-  doc.text('0821 - 3636 - 3648', 100, 73);
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(6);
-  doc.text('(Hotline LIKE Foundation)', 133, 73);
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(7);
-  doc.text('083-800-100-888', 100, 78);
+  doc.text('0821 - 3636 - 3648', 100, 78);
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(6);
   doc.text('(Hotline LIKE Foundation)', 133, 78);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(7);
+  doc.text('083-800-100-888', 100, 83);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(6);
+  doc.text('(Hotline LIKE Foundation)', 133, 83);
 
   // Form data section (left side)
   doc.setTextColor(0, 0, 0);
@@ -154,12 +154,12 @@ export const generateDonationPDF = (formData) => {
 
   yPos += 7;
   doc.setFont('helvetica', 'bold');
-  doc.text('Keterangan', labelX, yPos);
+  doc.text('Ket. Pembayaran', labelX, yPos);
   doc.text(':', colonX, yPos);
   doc.setFont('helvetica', 'normal');
   doc.text(`${formData.pembayaran || ''}`, valueX, yPos);
 
-  // Add noted if KESANGGUPAN is selected
+  // Add Catatan if KESANGGUPAN is selected
   if (formData.pembayaran === 'KESANGGUPAN' && formData.noted) {
     yPos += 7;
     doc.setFont('helvetica', 'bold');
@@ -176,10 +176,17 @@ export const generateDonationPDF = (formData) => {
   doc.text('Untuk Program', labelX, yPos);
   doc.text(':', colonX, yPos);
   doc.setFont('helvetica', 'normal');
-  const programName = formData.program === 'Lainnya' && formData.programCustom 
-    ? formData.programCustom 
-    : formData.program;
-  doc.text(programName || '', valueX, yPos);
+  doc.text(formData.program || '', valueX, yPos);
+
+  // Add Catatan Program if Other is selected
+  if (formData.program === 'Other' && formData.programCustom) {
+    yPos += 7;
+    doc.setFont('helvetica', 'bold');
+    doc.text('Catatan Program', labelX, yPos);
+    doc.text(':', colonX, yPos);
+    doc.setFont('helvetica', 'normal');
+    doc.text(formData.programCustom || '', valueX, yPos);
+  }
 
   // Bottom section with date and signatures
   const bottomY = 120;
