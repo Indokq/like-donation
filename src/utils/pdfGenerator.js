@@ -22,90 +22,94 @@ export const generateDonationPDF = (formData) => {
   doc.text('Penerimaan', 15, 28);
   doc.text('Donasi', 15, 36);
 
-  // Organization info header (right side)
+  // Organization info header (top right corner)
   doc.setTextColor(0, 0, 0);
   
-  // LIKE Foundation text
-  doc.setFontSize(11);
-  doc.setFont('helvetica', 'bold');
-  doc.text('LIKE foundation', 100, 15);
+  // LIKE Foundation logo + text
+  const logo = '/logo.jpg';
+  doc.addImage(logo, 'JPEG', 100, 10, 15, 15); // Logo image
   
-  // Address - moved down for better spacing
+  // "foundation" text next to logo
+  doc.setFontSize(12);
+  doc.setFont('helvetica', 'bold');
+  doc.text('foundation', 117, 19);
+  
+  // Address - aligned with logo
   doc.setFontSize(8);
   doc.setFont('helvetica', 'bold');
-  doc.text('Jl. Mayiend Panjaitan - Karang Kulon', 115, 22);
+  doc.text('Jl. Mayjend Panjaitan - Karang Kulon', 100, 28);
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(7);
-  doc.text('Kel. Papahan, Kec. Tasikmadu,', 115, 27);
-  doc.text('Kab. Karanganyar, Jawa Tengah.', 115, 31);
+  doc.text('Kel. Papahan, Kec. Tasikmadu,', 100, 32);
+  doc.text('Kab. Karanganyar, Jawa Tengah.', 100, 36);
 
-  // Bank accounts section - moved down with better spacing
+  // Bank accounts section - aligned with header
   doc.setFontSize(7);
   doc.setFont('helvetica', 'normal');
-  doc.text('Donasi dapat dikirimkan melalui nomer rekening', 115, 38);
+  doc.text('Donasi dapat dikirimkan melalui nomer rekening', 100, 42);
   
   // BNI Account
   doc.setFont('helvetica', 'bold');
   doc.setFillColor(255, 102, 0);
-  doc.rect(115, 42, 12, 4, 'F');
+  doc.rect(100, 46, 12, 4, 'F');
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(7);
-  doc.text('BNI', 117.5, 45);
+  doc.text('BNI', 102.5, 49);
   
   doc.setTextColor(0, 0, 0);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(7);
-  doc.text('555 - 8800 - 585', 130, 45);
+  doc.text('555 - 8800 - 585', 115, 49);
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(6);
-  doc.text('a.n. Lingkar Insan Keb...', 165, 45);
+  doc.text('a.n. Lingkar Insan Keb...', 150, 49);
 
   // BSI Account 1
   doc.setFillColor(0, 102, 204);
-  doc.rect(115, 48, 12, 4, 'F');
+  doc.rect(100, 52, 12, 4, 'F');
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(7);
-  doc.text('BSI', 117.5, 51);
+  doc.text('BSI', 102.5, 55);
   
   doc.setTextColor(0, 0, 0);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(7);
-  doc.text('730 - 8910 - 045', 130, 51);
+  doc.text('730 - 8910 - 045', 115, 55);
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(6);
-  doc.text('a.n. Wakaf Produktif K...', 165, 51);
+  doc.text('a.n. Wakaf Produktif K...', 150, 55);
 
   // BSI Account 2
   doc.setFillColor(0, 102, 204);
-  doc.rect(115, 54, 12, 4, 'F');
+  doc.rect(100, 58, 12, 4, 'F');
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(7);
-  doc.text('BSI', 117.5, 57);
+  doc.text('BSI', 102.5, 61);
   
   doc.setTextColor(0, 0, 0);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(7);
-  doc.text('730 - 8910 - 339', 130, 57);
+  doc.text('730 - 8910 - 339', 115, 61);
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(6);
-  doc.text('a.n. Solidaritas Al Aqsha', 165, 57);
+  doc.text('a.n. Solidaritas Al Aqsha', 150, 61);
 
-  // WhatsApp confirmation - moved down for better spacing
+  // WhatsApp confirmation - aligned with header
   doc.setFontSize(7);
   doc.setFont('helvetica', 'normal');
-  doc.text('Konfirmasi ke nomer WhatsApp', 115, 64);
+  doc.text('Konfirmasi ke nomer WhatsApp', 100, 68);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(7);
-  doc.text('0821 - 3636 - 3648', 115, 69);
+  doc.text('0821 - 3636 - 3648', 100, 73);
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(6);
-  doc.text('(Hotline LIKE Foundation)', 148, 69);
+  doc.text('(Hotline LIKE Foundation)', 133, 73);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(7);
-  doc.text('083-800-100-888', 115, 74);
+  doc.text('083-800-100-888', 100, 78);
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(6);
-  doc.text('(Hotline LIKE Foundation)', 148, 74);
+  doc.text('(Hotline LIKE Foundation)', 133, 78);
 
   // Form data section (left side)
   doc.setTextColor(0, 0, 0);

@@ -11,9 +11,13 @@ function App() {
         <div className="flex justify-center mb-4">
           <button
             onClick={() => setShowQR(!showQR)}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold"
+            className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow p-3"
           >
-            {showQR ? 'Lihat Form' : 'Lihat QR Code'}
+            <img 
+              src="/logo.jpg" 
+              alt="LIKE Foundation" 
+              className="h-16 w-auto"
+            />
           </button>
         </div>
 
