@@ -47,8 +47,12 @@ export default function DonationForm() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     
+    // If payment method changes from KESANGGUPAN to something else, clear noted
+    if (name === 'pembayaran' && formData.pembayaran === 'KESANGGUPAN' && value !== 'KESANGGUPAN') {
+      setFormData(prev => ({ ...prev, [name]: value, noted: '' }));
+    }
     // If program changes from Other to something else, clear programCustom
-    if (name === 'program' && formData.program === 'Other' && value !== 'Other') {
+    else if (name === 'program' && formData.program === 'Other' && value !== 'Other') {
       setFormData(prev => ({ ...prev, [name]: value, programCustom: '' }));
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
@@ -288,19 +292,21 @@ Semoga diberikan kemudahan dan keberkahan untuk kita semua`;
               {errors.pembayaran && <p className="mt-1 text-sm text-red-500">{errors.pembayaran}</p>}
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Catatan
-              </label>
-              <textarea
-                name="noted"
-                value={formData.noted}
-                onChange={handleChange}
-                placeholder="Tambahkan catatan (opsional)"
-                rows={3}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-              />
-            </div>
+            {formData.pembayaran === 'KESANGGUPAN' && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Catatan
+                </label>
+                <textarea
+                  name="noted"
+                  value={formData.noted}
+                  onChange={handleChange}
+                  placeholder="Tambahkan catatan untuk kesanggupan donasi"
+                  rows={3}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                />
+              </div>
+            )}
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
