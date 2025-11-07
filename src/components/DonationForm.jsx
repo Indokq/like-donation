@@ -18,6 +18,29 @@ const programOptions = [
   'Other'
 ];
 
+// Helper function to extract nominal from program name
+const extractNominalFromProgram = (program) => {
+  if (!program || program === 'Other') return '';
+  
+  // Extract number from parentheses: "Inspiring Quran (6jt)" → "6jt"
+  const match = program.match(/\(([^)]+)\)/);
+  if (!match) return '';
+  
+  const value = match[1].toLowerCase().replace(/\s/g, '');
+  
+  // Convert to number
+  // "6jt" → 6000000
+  // "3jt" → 3000000
+  // "1jt" → 1000000
+  // "3,5jt" → 3500000
+  if (value.includes('jt')) {
+    const num = parseFloat(value.replace('jt', '').replace(',', '.'));
+    return Math.round(num * 1000000).toString();
+  }
+  
+  return '';
+};
+
 export default function DonationForm() {
   const [formData, setFormData] = useState({
     tanggal: new Date().toISOString().split('T')[0],
@@ -51,10 +74,17 @@ export default function DonationForm() {
     if (name === 'pembayaran' && formData.pembayaran === 'KESANGGUPAN' && value !== 'KESANGGUPAN') {
       setFormData(prev => ({ ...prev, [name]: value, noted: '' }));
     }
-    // If program changes from Other to something else, clear programCustom
-    else if (name === 'program' && formData.program === 'Other' && value !== 'Other') {
-      setFormData(prev => ({ ...prev, [name]: value, programCustom: '' }));
-    } else {
+    // If program changes, auto-fill nominal and clear programCustom if not Other
+    else if (name === 'program') {
+      const nominal = extractNominalFromProgram(value);
+      setFormData(prev => ({
+        ...prev,
+        program: value,
+        nominal: nominal,
+        programCustom: value === 'Other' ? prev.programCustom : ''
+      }));
+    }
+    else {
       setFormData(prev => ({ ...prev, [name]: value }));
     }
     
@@ -242,6 +272,42 @@ Semoga diberikan kemudahan dan keberkahan untuk kita semua`;
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
+                Program <span className="text-red-500">*</span>
+              </label>
+              <select
+                name="program"
+                value={formData.program}
+                onChange={handleChange}
+                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                  errors.program ? 'border-red-500' : 'border-gray-300'
+                }`}
+              >
+                <option value="" disabled hidden>Pilih program donasi</option>
+                {programOptions.map(program => (
+                  <option key={program} value={program}>{program}</option>
+                ))}
+              </select>
+              {errors.program && <p className="mt-1 text-sm text-red-500">{errors.program}</p>}
+            </div>
+
+            {formData.program === 'Other' && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Catatan Program <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="programCustom"
+                  value={formData.programCustom}
+                  onChange={handleChange}
+                  placeholder="Masukkan catatan program"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                />
+              </div>
+            )}
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 Nominal Donasi (Rp) <span className="text-red-500">*</span>
               </label>
               <input
@@ -251,9 +317,10 @@ Semoga diberikan kemudahan dan keberkahan untuk kita semua`;
                 onChange={handleChange}
                 placeholder="50000"
                 min="1000"
+                disabled={formData.program && formData.program !== 'Other'}
                 className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
                   errors.nominal ? 'border-red-500' : 'border-gray-300'
-                }`}
+                } ${formData.program && formData.program !== 'Other' ? 'bg-gray-50 cursor-not-allowed' : ''}`}
               />
               {errors.nominal && <p className="mt-1 text-sm text-red-500">{errors.nominal}</p>}
             </div>
@@ -303,42 +370,6 @@ Semoga diberikan kemudahan dan keberkahan untuk kita semua`;
                   onChange={handleChange}
                   placeholder="Tambahkan catatan untuk kesanggupan donasi"
                   rows={3}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                />
-              </div>
-            )}
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Program <span className="text-red-500">*</span>
-              </label>
-              <select
-                name="program"
-                value={formData.program}
-                onChange={handleChange}
-                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                  errors.program ? 'border-red-500' : 'border-gray-300'
-                }`}
-              >
-                <option value="" disabled hidden>Pilih program donasi</option>
-                {programOptions.map(program => (
-                  <option key={program} value={program}>{program}</option>
-                ))}
-              </select>
-              {errors.program && <p className="mt-1 text-sm text-red-500">{errors.program}</p>}
-            </div>
-
-            {formData.program === 'Other' && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Catatan Program <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="programCustom"
-                  value={formData.programCustom}
-                  onChange={handleChange}
-                  placeholder="Masukkan catatan program"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 />
               </div>
