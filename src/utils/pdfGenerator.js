@@ -48,51 +48,40 @@ export const generateDonationPDF = (formData) => {
   doc.setFont('helvetica', 'normal');
   doc.text('Donasi dapat dikirimkan melalui nomer rekening', 100, 42);
   
-  // BNI Account
-  doc.setFont('helvetica', 'bold');
-  doc.setFillColor(255, 102, 0);
-  doc.rect(100, 46, 12, 4, 'F');
-  doc.setTextColor(255, 255, 255);
-  doc.setFontSize(7);
-  doc.text('BNI', 102.5, 49);
+  // BNI Account with logo
+  const bniLogo = '/bni-logo.jpg';
+  doc.addImage(bniLogo, 'JPEG', 100, 45, 18, 6);
   
   doc.setTextColor(0, 0, 0);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(7);
-  doc.text('555 - 8800 - 585', 115, 49);
+  doc.text('555 - 8800 - 585', 120, 49);
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(6);
-  doc.text('a.n. Lingkar Insan Keb...', 150, 49);
+  doc.text('a.n. Lingkar Insan Kebaikan', 155, 49);
 
-  // BSI Account 1
-  doc.setFillColor(0, 102, 204);
-  doc.rect(100, 52, 12, 4, 'F');
-  doc.setTextColor(255, 255, 255);
-  doc.setFontSize(7);
-  doc.text('BSI', 102.5, 55);
+  // BSI Account 1 with logo
+  const bsiLogo = '/bsi-logo.jpeg';
+  doc.addImage(bsiLogo, 'JPEG', 100, 53, 18, 6);
   
   doc.setTextColor(0, 0, 0);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(7);
-  doc.text('730 - 8910 - 045', 115, 55);
+  doc.text('730 - 8910 - 045', 120, 57);
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(6);
-  doc.text('a.n. Wakaf Produktif K...', 150, 55);
+  doc.text('a.n. Wakaf Produktif Kebaikan', 155, 57);
 
-  // BSI Account 2
-  doc.setFillColor(0, 102, 204);
-  doc.rect(100, 58, 12, 4, 'F');
-  doc.setTextColor(255, 255, 255);
-  doc.setFontSize(7);
-  doc.text('BSI', 102.5, 61);
+  // BSI Account 2 with logo
+  doc.addImage(bsiLogo, 'JPEG', 100, 61, 18, 6);
   
   doc.setTextColor(0, 0, 0);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(7);
-  doc.text('730 - 8910 - 339', 115, 61);
+  doc.text('730 - 8910 - 339', 120, 65);
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(6);
-  doc.text('a.n. Solidaritas Al Aqsha', 150, 61);
+  doc.text('a.n. Solidaritas Al Aqsha', 155, 65);
 
   // WhatsApp confirmation - aligned with header
   doc.setFontSize(7);
@@ -230,6 +219,56 @@ export const generateDonationPDF = (formData) => {
   // Generate filename
   const fileName = `Bukti-Donasi-${formData.nama.replace(/\s+/g, '-')}-${formData.tanggal}.pdf`;
 
-  // Save the PDF
-  doc.save(fileName);
+  // Detect mobile device
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+  // Save the PDF with mobile-friendly approach
+  if (isMobile) {
+    const pdfBlob = doc.output('blob');
+    
+    // Try Web Share API first (modern mobile browsers)
+    if (navigator.share && navigator.canShare && navigator.canShare({ files: [new File([pdfBlob], fileName, { type: 'application/pdf' })] })) {
+      const file = new File([pdfBlob], fileName, { type: 'application/pdf' });
+      navigator.share({
+        files: [file],
+        title: 'Bukti Donasi',
+        text: 'Download Bukti Donasi PDF'
+      }).catch((error) => {
+        console.log('Share cancelled or failed:', error);
+        // Fallback to blob download
+        fallbackBlobDownload(pdfBlob, fileName, isIOS);
+      });
+    } else {
+      // Fallback for browsers without Web Share API
+      fallbackBlobDownload(pdfBlob, fileName, isIOS);
+    }
+  } else {
+    // Desktop: Original behavior
+    doc.save(fileName);
+  }
 };
+
+// Helper function for fallback download
+function fallbackBlobDownload(blob, fileName, isIOS) {
+  const pdfUrl = URL.createObjectURL(blob);
+  
+  if (isIOS) {
+    // iOS Safari: Open in new tab with instruction
+    window.open(pdfUrl, '_blank');
+    setTimeout(() => {
+      alert('PDF terbuka di tab baru.\n\nUntuk menyimpan:\n1. Tekan tombol "Share" (kotak dengan panah ↑)\n2. Pilih "Simpan ke Files" atau "Save to Files"');
+    }, 500);
+  } else {
+    // Android: Try direct download
+    const link = document.createElement('a');
+    link.href = pdfUrl;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    // Clean up the URL after a delay
+    setTimeout(() => URL.revokeObjectURL(pdfUrl), 1000);
+  }
+}

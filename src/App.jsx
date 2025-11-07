@@ -11,12 +11,12 @@ function App() {
         <div className="flex justify-center mb-4">
           <button
             onClick={() => setShowQR(!showQR)}
-            className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow p-3"
+            className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow p-2 sm:p-3"
           >
             <img 
               src="/logo.jpg" 
               alt="LIKE Foundation" 
-              className="h-16 w-auto"
+              className="h-12 sm:h-16 w-auto"
             />
           </button>
         </div>

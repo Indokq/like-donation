@@ -1,15 +1,15 @@
 export default function QRCodeDisplay() {
   return (
-    <div className="bg-white rounded-lg shadow-xl p-8 text-center">
-      <h2 className="text-2xl font-bold text-gray-800 mb-4">LIKE Foundation</h2>
-      <p className="text-gray-600 mb-6">Lingkar Insan Kebaikan</p>
+    <div className="bg-white rounded-lg shadow-xl p-4 sm:p-8 text-center">
+      <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4">LIKE Foundation</h2>
+      <p className="text-sm sm:text-base text-gray-600 mb-6">Lingkar Insan Kebaikan</p>
       
       <div className="flex justify-center mb-6">
-        <div className="bg-white p-8 rounded-lg">
+        <div className="bg-white p-4 sm:p-8 rounded-lg">
           <img 
             src="/logo.jpg" 
             alt="LIKE Foundation Logo" 
-            className="w-64 h-auto"
+            className="w-48 sm:w-64 h-auto mx-auto"
           />
         </div>
       </div>
