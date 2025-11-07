@@ -15,7 +15,7 @@ const programOptions = [
   'Inspiring Quran (3jt)',
   'Inspiring Quran (1jt)',
   'Wakaf Produktif 10 pohon (3,5jt)',
-  'Lainnya'
+  'Other'
 ];
 
 export default function DonationForm() {
@@ -47,12 +47,8 @@ export default function DonationForm() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     
-    // If payment method changes from KESANGGUPAN to something else, clear noted
-    if (name === 'pembayaran' && formData.pembayaran === 'KESANGGUPAN' && value !== 'KESANGGUPAN') {
-      setFormData(prev => ({ ...prev, [name]: value, noted: '' }));
-    }
-    // If program changes from Lainnya to something else, clear programCustom
-    else if (name === 'program' && formData.program === 'Lainnya' && value !== 'Lainnya') {
+    // If program changes from Other to something else, clear programCustom
+    if (name === 'program' && formData.program === 'Other' && value !== 'Other') {
       setFormData(prev => ({ ...prev, [name]: value, programCustom: '' }));
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
@@ -105,19 +101,22 @@ DONASI BARU
   Alamat : ${formData.alamat}
   Nominal : Rp ${parseInt(formData.nominal).toLocaleString('id-ID')}
   Terbilang : ${formData.terbilang}
-  Keterangan : ${formData.pembayaran}`;
+  Ket. Pembayaran : ${formData.pembayaran}`;
 
-    // Add noted if KESANGGUPAN is selected
-    if (formData.pembayaran === 'KESANGGUPAN' && formData.noted) {
+    // Add Catatan if filled
+    if (formData.noted) {
       message += `\n  Catatan : ${formData.noted}`;
     }
 
-    // Add program - use custom program if Lainnya is selected
-    const programName = formData.program === 'Lainnya' && formData.programCustom 
-      ? formData.programCustom 
-      : formData.program;
+    // Add program
+    message += `\n  Program : ${formData.program}`;
     
-    message += `\n  Program : ${programName}
+    // Add Catatan Program if Other is selected
+    if (formData.program === 'Other' && formData.programCustom) {
+      message += `\n  Catatan Program : ${formData.programCustom}`;
+    }
+    
+    message += `
 
 Semoga diberikan kemudahan dan keberkahan untuk kita semua`;
 
@@ -271,7 +270,7 @@ Semoga diberikan kemudahan dan keberkahan untuk kita semua`;
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Keterangan <span className="text-red-500">*</span>
+                Ket. Pembayaran <span className="text-red-500">*</span>
               </label>
               <select
                 name="pembayaran"
@@ -289,21 +288,19 @@ Semoga diberikan kemudahan dan keberkahan untuk kita semua`;
               {errors.pembayaran && <p className="mt-1 text-sm text-red-500">{errors.pembayaran}</p>}
             </div>
 
-            {formData.pembayaran === 'KESANGGUPAN' && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Catatan/Noted
-                </label>
-                <textarea
-                  name="noted"
-                  value={formData.noted}
-                  onChange={handleChange}
-                  placeholder="Tambahkan catatan untuk kesanggupan donasi"
-                  rows={3}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                />
-              </div>
-            )}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Catatan
+              </label>
+              <textarea
+                name="noted"
+                value={formData.noted}
+                onChange={handleChange}
+                placeholder="Tambahkan catatan (opsional)"
+                rows={3}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              />
+            </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -325,17 +322,17 @@ Semoga diberikan kemudahan dan keberkahan untuk kita semua`;
               {errors.program && <p className="mt-1 text-sm text-red-500">{errors.program}</p>}
             </div>
 
-            {formData.program === 'Lainnya' && (
+            {formData.program === 'Other' && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Nama Program <span className="text-red-500">*</span>
+                  Catatan Program <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
                   name="programCustom"
                   value={formData.programCustom}
                   onChange={handleChange}
-                  placeholder="Masukkan nama program"
+                  placeholder="Masukkan catatan program"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 />
               </div>
