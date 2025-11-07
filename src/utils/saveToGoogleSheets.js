@@ -8,10 +8,6 @@ export const saveToGoogleSheets = async (formData) => {
 
   try {
     // Prepare data for Google Sheets
-    const programName = formData.program === 'Lainnya' && formData.programCustom 
-      ? formData.programCustom 
-      : formData.program;
-
     const dataToSend = {
       tanggal: formData.tanggal,
       nama: formData.nama,
@@ -20,8 +16,9 @@ export const saveToGoogleSheets = async (formData) => {
       nominal: formData.nominal,
       terbilang: formData.terbilang,
       keterangan: formData.pembayaran,
-      catatan: formData.noted || '-',
-      program: programName,
+      catatan: formData.noted || '',
+      program: formData.program,
+      catatanProgram: formData.program === 'Other' ? (formData.programCustom || '') : '',
       timestamp: new Date().toLocaleString('id-ID', {
         timeZone: 'Asia/Jakarta',
         year: 'numeric',

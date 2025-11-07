@@ -35,16 +35,11 @@ function doPost(e) {
       data.nominal || '',           // Column E: Nominal (RP)
       data.terbilang || '',         // Column F: Terbilang
       data.keterangan || '',        // Column G: Ket. Pembayaran
-      data.catatan || '',           // Column H: Catatan Pembayaran
+      data.catatan || '',           // Column H: Catatan (only if KESANGGUPAN)
       data.program || '',           // Column I: Program
-      '',                           // Column J: Catatan Program (empty for now, will be filled if program is "Lainnya")
+      data.catatanProgram || '',    // Column J: Catatan Program (only if "Other" selected)
       data.timestamp || ''          // Column K: Date Entry
     ];
-    
-    // If program is custom (Lainnya), add the custom program name
-    if (data.program === 'Lainnya' || data.program === '') {
-      rowData[9] = data.programCustom || data.program || '';
-    }
     
     // Append the row to the sheet
     sheet.appendRow(rowData);
@@ -98,7 +93,9 @@ Make sure your Google Sheet has these column headers in Row 1:
 1. **Receives POST request** from your donation form website
 2. **Parses JSON data** sent from the form
 3. **Maps each field** to the correct column (A through K)
-4. **Handles optional fields** (Catatan appears only if KESANGGUPAN is selected)
+4. **Handles optional fields:**
+   - Column H (Catatan): only filled if "KESANGGUPAN" is selected
+   - Column J (Catatan Program): only filled if "Other" program is selected
 5. **Appends a new row** to your Google Sheet
 6. **Returns success/error** message (though we can't read it due to CORS)
 
