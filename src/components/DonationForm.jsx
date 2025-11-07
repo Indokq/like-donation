@@ -155,11 +155,16 @@ Semoga diberikan kemudahan dan keberkahan untuk kita semua`;
                 Tanggal Donasi
               </label>
               <input
-                type="date"
+                type="text"
                 name="tanggal"
-                value={formData.tanggal}
+                value={new Date(formData.tanggal).toLocaleDateString('id-ID', { 
+                  day: 'numeric', 
+                  month: 'long', 
+                  year: 'numeric' 
+                })}
                 disabled
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 cursor-not-allowed"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 cursor-not-allowed text-gray-700 text-base"
+                style={{ WebkitAppearance: 'none', appearance: 'none', minHeight: '44px' }}
               />
             </div>
 
