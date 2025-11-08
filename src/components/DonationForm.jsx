@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { numberToWords } from '../utils/numberToWords';
 import { validateForm, formatPhoneForWhatsApp } from '../utils/validation';
-import { generateDonationPDF } from '../utils/pdfGenerator';
 import { saveToGoogleSheets } from '../utils/saveToGoogleSheets';
 
 const paymentMethods = [
@@ -91,16 +90,6 @@ export default function DonationForm() {
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
-  };
-
-  const handleDownloadPDF = () => {
-    const validationErrors = validateForm(formData);
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
-
-    generateDonationPDF(formData);
   };
 
   const handleSendWhatsApp = async () => {
@@ -436,34 +425,21 @@ Semoga diberikan kemudahan dan keberkahan untuk kita semua`;
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-              <button
-                type="button"
-                onClick={handleDownloadPDF}
-                className="py-3 px-4 sm:px-6 rounded-lg font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                <span>Download PDF</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={handleSendWhatsApp}
-                disabled={isSubmitting}
-                className={`py-3 px-4 sm:px-6 rounded-lg font-semibold text-white transition-colors flex items-center justify-center gap-2 text-sm sm:text-base ${
-                  isSubmitting
-                    ? 'bg-gray-400 cursor-not-allowed'
-                    : 'bg-green-600 hover:bg-green-700'
-                }`}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span>{isSubmitting ? 'Mengirim...' : 'Submit'}</span>
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={handleSendWhatsApp}
+              disabled={isSubmitting}
+              className={`w-full py-3 px-4 sm:px-6 rounded-lg font-semibold text-white transition-colors flex items-center justify-center gap-2 text-sm sm:text-base ${
+                isSubmitting
+                  ? 'bg-gray-400 cursor-not-allowed'
+                  : 'bg-green-600 hover:bg-green-700'
+              }`}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>{isSubmitting ? 'Mengirim...' : 'Submit'}</span>
+            </button>
           </div>
         </div>
       </div>
