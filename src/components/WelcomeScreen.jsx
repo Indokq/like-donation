@@ -6,12 +6,12 @@ export default function WelcomeScreen({ onEnter }) {
       className="min-h-screen flex items-center justify-center px-4 bg-cover bg-center bg-no-repeat relative"
       style={{ backgroundImage: 'url(/2.jpg)' }}
     >
-      {/* Dark overlay for better text visibility on mobile */}
       <div className="absolute inset-0 bg-black/20"></div>
       
-      <div className="text-center relative z-10 w-full max-w-md -mt-[3px]">
+      <div className="text-center relative z-10 w-full max-w-md -mt-12 sm:-mt-16">
+        {/* Logo */}
         <motion.div 
-          className="mb-6 sm:mb-8 md:mb-10 flex justify-center"
+          className="mb-0 flex justify-center pt-4"
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ 
@@ -24,14 +24,15 @@ export default function WelcomeScreen({ onEnter }) {
           <motion.img 
             src="/3.png" 
             alt="LIKE Foundation" 
-            className="h-24 xs:h-28 sm:h-36 md:h-48 w-auto max-w-[200px] sm:max-w-none"
-            whileHover={{ scale: 1.1, rotate: 5 }}
+            className="h-48 sm:h-56 md:h-64 w-auto"
+            whileHover={{ scale: 1.05 }}
             transition={{ type: "spring", stiffness: 300 }}
           />
         </motion.div>
 
+        {/* Title */}
         <motion.h1 
-          className="text-xl xs:text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2 sm:mb-3 drop-shadow-lg px-4"
+          className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-1 drop-shadow-lg -mt-6"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.8 }}
@@ -39,8 +40,9 @@ export default function WelcomeScreen({ onEnter }) {
           Selamat Datang
         </motion.h1>
         
+        {/* Description */}
         <motion.p 
-          className="text-xs xs:text-sm sm:text-base text-white/95 mb-6 sm:mb-8 max-w-md mx-auto drop-shadow-md px-6 leading-relaxed"
+          className="text-sm sm:text-base md:text-lg text-white mb-10 sm:mb-14 max-w-sm mx-auto drop-shadow-md leading-relaxed px-4"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5, duration: 0.8 }}
@@ -50,9 +52,10 @@ export default function WelcomeScreen({ onEnter }) {
           Bersama membangun kebaikan untuk sesama
         </motion.p>
 
+        {/* Button */}
         <motion.button
           onClick={onEnter}
-          className="relative bg-gradient-to-b from-teal-400 to-teal-600 text-white font-bold py-2.5 xs:py-3 px-10 xs:px-12 rounded-full shadow-lg text-base xs:text-lg overflow-hidden"
+          className="bg-gradient-to-b from-teal-400 to-teal-600 text-white font-bold py-3 px-16 rounded-full shadow-lg text-lg mt-16 sm:mt-20"
           style={{
             boxShadow: '0 8px 15px rgba(0,0,0,0.3), inset 0 -2px 5px rgba(0,0,0,0.3), inset 0 2px 5px rgba(255,255,255,0.4)',
             border: '2px solid rgba(255,255,255,0.3)',

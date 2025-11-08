@@ -185,6 +185,13 @@ Semoga diberikan kemudahan dan keberkahan untuk kita semua`;
       <div className="max-w-2xl mx-auto">
         <div className="bg-white rounded-lg shadow-xl p-4 sm:p-6 md:p-8">
           <div className="text-center mb-6 sm:mb-8">
+            <div className="mb-4 sm:mb-6 flex justify-center">
+              <img 
+                src="/3.png" 
+                alt="LIKE Foundation" 
+                className="h-16 sm:h-20 md:h-24 w-auto"
+              />
+            </div>
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">Form Donasi</h1>
             <p className="text-sm sm:text-base text-gray-600">Terima kasih atas niat baik Anda untuk berdonasi</p>
           </div>
