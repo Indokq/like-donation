@@ -1,67 +1,37 @@
-# Google Sheets Integration Fix
+# Google Sheets Integration with Approval System
 
-## Problem
-Only the timestamp is being saved to Google Sheets, but not the other form data (Nama, Alamat, etc).
-
-## Solution
-The Google Apps Script needs to be updated to properly parse and save all form data.
+## Overview
+Script ini menangani:
+1. **Penyimpanan data donasi** dari form website
+2. **Approval system** untuk admin dashboard
+3. **API endpoints** untuk manage donations
 
 ---
 
-## Instructions for Client
+## Spreadsheet Column Structure
+
+Pastikan Google Sheet Anda memiliki header berikut di **Row 1**:
+
+| A | B | C | D | E | F | G | H | I | J | K | L |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| Tanggal Donasi | Nama Donatur | No. WhatsApp | Alamat | Program | Catatan Program | Nominal Donasi (Rp) | Donasi Terbilang | Keterangan Pembayaran | Catatan Pembayaran | Sts Approval | Date Entry |
+
+**Catatan:**
+- **Kolom K (Sts Approval)**: Otomatis diisi "Pending" saat submit form
+- **Kolom L (Date Entry)**: Otomatis diisi timestamp saat submit
+
+---
+
+## Instructions for Setup
 
 ### Step 1: Open Google Apps Script Editor
 1. Open your Google Sheet
 2. Click **Extensions** → **Apps Script**
 
-### Step 2: Replace the Script Code
-Delete all existing code and paste this:
-
-```javascript
-function doPost(e) {
-  try {
-    // Get the active spreadsheet
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-    
-    // Parse the JSON data from the request
-    var data = JSON.parse(e.postData.contents);
-    
-    // Prepare the row data in correct column order
-    var rowData = [
-      data.tanggal || '',           // Column A: Tanggal
-      data.nama || '',              // Column B: Nama
-      data.noWa || '',              // Column C: No. Whatsapp
-      data.alamat || '',            // Column D: Alamat
-      data.nominal || '',           // Column E: Nominal (RP)
-      data.terbilang || '',         // Column F: Terbilang
-      data.keterangan || '',        // Column G: Ket. Pembayaran
-      data.catatan || '',           // Column H: Catatan (only if KESANGGUPAN)
-      data.program || '',           // Column I: Program
-      data.catatanProgram || '',    // Column J: Catatan Program (only if "Other" selected)
-      data.timestamp || ''          // Column K: Date Entry
-    ];
-    
-    // Append the row to the sheet
-    sheet.appendRow(rowData);
-    
-    // Return success response
-    return ContentService.createTextOutput(JSON.stringify({
-      'result': 'success',
-      'row': sheet.getLastRow()
-    })).setMimeType(ContentService.MimeType.JSON);
-    
-  } catch(error) {
-    // Log error for debugging
-    Logger.log('Error: ' + error.toString());
-    
-    // Return error response
-    return ContentService.createTextOutput(JSON.stringify({
-      'result': 'error',
-      'error': error.toString()
-    })).setMimeType(ContentService.MimeType.JSON);
-  }
-}
-```
+### Step 2: Copy Script Code
+1. Buka file **`GOOGLE_APPS_SCRIPT.js`** di project folder
+2. Copy **SEMUA code** dari file tersebut
+3. Paste ke Google Apps Script Editor (hapus code lama jika ada)
 
 ### Step 3: Save and Deploy
 1. Click **Save** (disk icon) or press `Ctrl+S`
@@ -70,53 +40,185 @@ function doPost(e) {
 4. Click **Deploy**
 5. Close the deployment window
 
-### Step 4: Test
-1. Go back to your donation form website
-2. Fill in all fields
-3. Click "Kirim WhatsApp"
-4. Check Google Sheets - all data should now appear!
+### Step 4: Copy Deployment URL
+1. Setelah deploy, akan muncul **Web app URL**
+2. Copy URL tersebut
+3. Paste ke file `.env` di project:
+   ```
+   VITE_GOOGLE_SHEETS_URL=https://script.google.com/macros/s/AKfycby.../exec
+   ```
+
+### Step 5: Test the Script
+**Option A: Test dari Apps Script Editor (Recommended)**
+1. Di Apps Script Editor, pilih function **`testDoPost`** dari dropdown (di toolbar atas)
+2. Click tombol **Run** (▶️ play button)
+3. Authorize script jika diminta
+4. Check Google Sheet - harus muncul data test dengan status "Pending"
+5. Check **Executions** log (icon jam di sidebar) - harus menunjukkan "success"
+
+**Option B: Test dari Website**
+1. Buka donation form website
+2. Isi semua field
+3. Click "Submit"
+4. Check Google Sheets - data harus muncul dengan status "Pending"
 
 ---
 
-## Spreadsheet Column Structure
+## API Endpoints untuk Admin Dashboard
 
-Make sure your Google Sheet has these column headers in Row 1:
+Script ini menyediakan API endpoints untuk admin dashboard:
 
-| A | B | C | D | E | F | G | H | I | J | K |
-|---|---|---|---|---|---|---|---|---|---|---|
-| Tanggal | Nama | No. Whatsapp | Alamat | Nominal (RP) | Terbilang | Ket. Pembayaran | Catatan Pembayaran | Program | Catatan Program | Date Entry |
+### 1. **Get All Donations**
+```
+GET: https://script.google.com/.../exec?action=list
+```
+
+**Response:**
+```json
+{
+  "result": "success",
+  "count": 10,
+  "data": [
+    {
+      "rowNumber": 2,
+      "tanggal": "8 November 2025",
+      "nama": "John Doe",
+      "noWa": "081234567890",
+      "alamat": "Jakarta",
+      "program": "Inspiring Quran (6jt)",
+      "programCustom": "",
+      "nominal": "6000000",
+      "terbilang": "enam juta rupiah",
+      "pembayaran": "TRANSFER",
+      "noted": "",
+      "approval": "Pending",
+      "dateEntry": "2025-11-08 15:30:00"
+    }
+  ]
+}
+```
+
+### 2. **Get Donations by Status**
+```
+GET: https://script.google.com/.../exec?action=list&status=pending
+GET: https://script.google.com/.../exec?action=list&status=approved
+GET: https://script.google.com/.../exec?action=list&status=rejected
+```
+
+### 3. **Approve Donation**
+```
+GET: https://script.google.com/.../exec?action=approve&row=5
+```
+
+**Response:**
+```json
+{
+  "result": "success",
+  "message": "Status berhasil diubah menjadi Approved",
+  "data": {
+    "rowNumber": 5,
+    "nama": "John Doe",
+    "nominal": "6000000",
+    "approval": "Approved"
+  }
+}
+```
+
+### 4. **Reject Donation**
+```
+GET: https://script.google.com/.../exec?action=reject&row=7
+```
+
+**Response:**
+```json
+{
+  "result": "success",
+  "message": "Status berhasil diubah menjadi Rejected",
+  "data": {
+    "rowNumber": 7,
+    "nama": "Jane Smith",
+    "nominal": "3000000",
+    "approval": "Rejected"
+  }
+}
+```
 
 ---
 
 ## What This Script Does
 
-1. **Receives POST request** from your donation form website
-2. **Parses JSON data** sent from the form
-3. **Maps each field** to the correct column (A through K)
-4. **Handles optional fields:**
-   - Column H (Catatan): only filled if "KESANGGUPAN" is selected
-   - Column J (Catatan Program): only filled if "Other" program is selected
-5. **Appends a new row** to your Google Sheet
-6. **Returns success/error** message (though we can't read it due to CORS)
+### From Donation Form (POST):
+1. Receives POST request dari form website
+2. Parse JSON data
+3. Mapping data ke kolom A-L
+4. Set "Sts Approval" = **"Pending"** (default)
+5. Set "Date Entry" = timestamp otomatis
+6. Append row baru ke Google Sheet
+
+### From Admin Dashboard (GET):
+1. **List donations** - dengan atau tanpa filter status
+2. **Approve donation** - ubah status jadi "Approved"
+3. **Reject donation** - ubah status jadi "Rejected"
+4. Return JSON response untuk ditampilkan di dashboard
 
 ---
 
 ## Troubleshooting
 
-**If data still doesn't save:**
+### Error: "Cannot read properties of undefined (reading 'postData')"
 
-1. Check that the script URL in `.env` file matches your deployment URL
-2. Make sure the Google Apps Script is deployed with:
-   - **Execute as:** Me (your Google account)
+**Penyebab:** Script dijalankan tanpa POST data (biasanya saat di-test dari Apps Script Editor tanpa data)
+
+**Solusi:**
+1. Gunakan function **`testDoPost()`** untuk testing
+2. Atau test langsung dari website form
+
+---
+
+### Error: "Permission denied"
+
+**Penyebab:** Script belum di-authorize atau deployment settings salah
+
+**Solusi:**
+1. Run function `testDoPost()` dari Apps Script Editor
+2. Klik **Review Permissions** saat diminta
+3. Pilih akun Google Anda
+4. Klik **Advanced** → **Go to [Project Name] (unsafe)**
+5. Klik **Allow**
+6. Re-deploy script dengan settings:
+   - **Execute as:** Me
    - **Who has access:** Anyone
-3. Try re-deploying the script (Step 3 above)
-4. Check Apps Script execution logs:
-   - In Apps Script Editor → Click **Executions** (clock icon on left sidebar)
-   - Look for errors
 
-**If you see errors in the execution log:**
-- Take a screenshot
-- Share with your developer for debugging
+---
+
+### Data tidak muncul di Google Sheet
+
+**Checklist:**
+1. ✅ Script sudah di-deploy dengan benar?
+2. ✅ URL deployment sudah di-copy ke `.env` file?
+3. ✅ Google Sheet memiliki header di Row 1 (A-L)?
+4. ✅ Test function `testDoPost()` berhasil?
+5. ✅ Check Executions log - ada error?
+
+**Jika masih bermasalah:**
+- Buka **Executions** log di Apps Script Editor (icon jam ⏰)
+- Screenshot error yang muncul
+- Share dengan developer
+
+---
+
+### API tidak bisa diakses dari Admin Dashboard
+
+**Penyebab:** CORS policy atau deployment settings
+
+**Solusi:**
+1. Pastikan deployment dengan **Who has access:** Anyone
+2. Test API endpoint di browser:
+   ```
+   https://script.google.com/.../exec?action=list
+   ```
+3. Jika muncul download file JSON → berhasil!
+4. Jika redirect ke login → check deployment settings
 
 ---
 

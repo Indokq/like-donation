@@ -13,21 +13,12 @@ export const saveToGoogleSheets = async (formData) => {
       nama: formData.nama,
       noWa: formData.noWa,
       alamat: formData.alamat,
+      program: formData.program,
+      programCustom: formData.program === 'Other' ? (formData.programCustom || '') : '',
       nominal: formData.nominal,
       terbilang: formData.terbilang,
-      keterangan: formData.pembayaran,
-      catatan: formData.noted || '',
-      program: formData.program,
-      catatanProgram: formData.program === 'Other' ? (formData.programCustom || '') : '',
-      timestamp: new Date().toLocaleString('id-ID', {
-        timeZone: 'Asia/Jakarta',
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
-      })
+      pembayaran: formData.pembayaran,
+      noted: formData.noted || ''
     };
 
     const response = await fetch(sheetsUrl, {

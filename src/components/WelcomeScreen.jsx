@@ -1,43 +1,65 @@
-import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 
 export default function WelcomeScreen({ onEnter }) {
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    setTimeout(() => setIsVisible(true), 100);
-  }, []);
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center px-4">
-      <div className={`text-center transition-all duration-1000 ${
-        isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
-      }`}>
-        <div className="mb-8 flex justify-center">
-          <div className="bg-white rounded-2xl shadow-2xl p-8 transform hover:scale-105 transition-transform duration-300">
-            <img 
-              src="/logo.jpg" 
-              alt="LIKE Foundation" 
-              className="h-32 sm:h-40 md:h-48 w-auto mx-auto"
-            />
-          </div>
-        </div>
+    <div className="min-h-screen bg-gradient-to-b from-slate-700 via-slate-500 to-blue-400 flex items-center justify-center px-4">
+      <div className="text-center">
+        <motion.div 
+          className="mb-12 flex justify-center"
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ 
+            type: "spring",
+            stiffness: 100,
+            damping: 15,
+            duration: 0.8
+          }}
+        >
+          <motion.img 
+            src="/3.png" 
+            alt="LIKE Foundation" 
+            className="h-32 sm:h-40 md:h-48 w-auto"
+            whileHover={{ scale: 1.1, rotate: 5 }}
+            transition={{ type: "spring", stiffness: 300 }}
+          />
+        </motion.div>
 
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-800 mb-4">
+        <motion.h1 
+          className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4 drop-shadow-lg"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.8 }}
+        >
           Selamat Datang
-        </h1>
+        </motion.h1>
         
-        <p className="text-base sm:text-lg text-gray-600 mb-8 max-w-md mx-auto">
+        <motion.p 
+          className="text-base sm:text-lg text-white/90 mb-10 max-w-md mx-auto drop-shadow-md"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5, duration: 0.8 }}
+        >
           LIKE Foundation - Lingkar Insan Kebaikan
           <br />
           Bersama membangun kebaikan untuk sesama
-        </p>
+        </motion.p>
 
-        <button
+        <motion.button
           onClick={onEnter}
-          className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-semibold py-4 px-12 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 text-lg"
+          className="relative bg-gradient-to-b from-teal-400 to-teal-600 text-white font-bold py-4 px-16 rounded-full shadow-lg text-xl overflow-hidden"
+          style={{
+            boxShadow: '0 8px 15px rgba(0,0,0,0.3), inset 0 -2px 5px rgba(0,0,0,0.3), inset 0 2px 5px rgba(255,255,255,0.4)',
+            border: '2px solid rgba(255,255,255,0.3)',
+            textShadow: '0 2px 4px rgba(0,0,0,0.3)'
+          }}
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.7, duration: 0.5 }}
+          whileHover={{ scale: 1.05, boxShadow: '0 10px 20px rgba(0,0,0,0.4)' }}
+          whileTap={{ scale: 0.95 }}
         >
           Masuk
-        </button>
+        </motion.button>
       </div>
     </div>
   );
